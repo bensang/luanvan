@@ -1,0 +1,84 @@
+@extends('frontend.layout') 
+@include('frontend.partials.meta') 
+@section('content')
+<section class="col-sm-8 col-xs-12 block-sitemain">
+<article class="block-breadcrumb-page">
+    <ul class="breadcrumb"> 
+        <li><a href="{{ route('home') }}" title="Trở về trang chủ">Trang chủ</a></li>           
+        <li class="active">Liên hệ</li>
+    </ul>
+</article>
+<div class="container contact">
+  <div class="row">
+    <div class="col-md-2" style="margin-bottom: 20px;">
+      <div class="widget-item info-contact in-fo-page-content">
+        <h1 class="title-head">Thông tin liên hệ</h1>
+        <!-- End .widget-title -->
+        
+        
+        <!-- End .widget-menu -->
+      </div>
+      
+    </div>
+    <div class="col-md-6">
+      <div class="page-login">
+        <div id="login">
+          <h3 class="title-head"></h3>         
+          <div id="showmess" class="clearfix"></div>
+                @if(Session::has('message'))
+                
+                <p class="alert alert-info" >{{ Session::get('message') }}</p>
+                
+                @endif
+                @if (count($errors) > 0)                        
+                  <div class="alert alert-danger ">
+                    <ul>                           
+                        <li>Vui lòng nhập đầy đủ thông tin.</li>                            
+                    </ul>
+                  </div>                        
+                @endif  
+                <form class="block-form" id="contactForm" action="{{ route('contact') }}" method="POST">
+                {{ csrf_field() }}
+                    <div class="row">
+                        <div class="form-group col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Họ tên khách hàng" value="{{ old('name') }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Số điện thoại" value="{{ old('phone') }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-12 col-xs-12">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{ old('email') }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-12 col-xs-12">
+                            <textarea name="content" id="content" rowspan="300" class="form-control" placeholder="Ghi chú">{{ old('content') }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-12 col-xs-12">
+                            <button type="submit" id="btnSave" class="btn btn-prmary btn-view">Gửi liên hệ</button>
+                        </div>
+                    </div>
+                </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+@stop
+@section('javascript_page')
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#btnSave').click(function(){
+            $(this).html('Đang gửi...').attr('disabled', 'disabled');
+            $('#contactForm').submit();
+        });
+    });
+</script>
+@stop
