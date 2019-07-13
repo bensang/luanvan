@@ -168,7 +168,7 @@ var google_remarketing_only = true;
 					type : 'POST',
 					dataType : 'html',
 					success : function(data){
-						$('#ward_id').html(data).selectpicker('refresh');
+						$('#ward_id').html(data);
 					}
 				});
 
@@ -182,7 +182,7 @@ var google_remarketing_only = true;
 					type : 'POST',
 					dataType : 'html',
 					success : function(data){
-						$('#street_id').html(data).selectpicker('refresh');
+						$('#street_id').html(data);
 					}
 				});
 
@@ -196,7 +196,7 @@ var google_remarketing_only = true;
 					type : 'POST',
 					dataType : 'html',
 					success : function(data){
-						$('#project_id').html(data).selectpicker('refresh');
+						$('#project_id').html(data);
 					}
 				})
 			});

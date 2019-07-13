@@ -183,6 +183,11 @@
                                       <button class="btn1">Upload a file</button>
                                       <input type="file" name="file-images[{{ $hinh->id }}]" value="<?php echo $hinh->filename; ?>" />
                                     </div>
+                                    <div class="checkbox">                                   
+                                      <label><input type="radio" name="thumbnail_id" class="thumb" value="{{ $hinh->id }}" {{ $detail->project_id == $k ? "checked" : "" }}> Ảnh chi tiết </label>
+                                      <a href="{{ route( 'productimg.destroy', [ 'id' => $hinh->id ]) }}" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-trash"></span></a>
+                                    </div>
+                                  </div>
                                   </div>
                                 @endforeach
                               @endif
@@ -200,15 +205,15 @@
                   </div>
 
                 </div>
-                  
-            </div>
-            <div class="box-footer">
+                  <div class="box-footer">
               <input type="hidden" name="latt" id="latt" value="{{ old('latt', $detail->lt) }}" />
               <input type="hidden" name="longt" id="longt" value="{{ old('longt', $detail->lg) }}" />
               <button type="button" class="btn btn-default btn-sm" id="btnLoading" style="display:none"><i class="fa fa-spin fa-spinner"></i></button>
               <button type="submit" class="btn btn-primary btn-sm" id="btnSave">Lưu</button>
               <a class="btn btn-default btn-sm" class="btn btn-primary btn-sm" href="{{ route('product.index') }}">Hủy</a>
             </div>
+            </div>
+            
             
         </div>
         <!-- /.box -->     

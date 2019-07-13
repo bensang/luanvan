@@ -54,6 +54,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="stylesheet" type="text/css" href="{{url('admin/css/colorbox.html')}}" media="screen" />
 <link rel="stylesheet" type="text/css" href="{{url('admin/css/carousel.css')}}" media="screen" />
 <link rel="stylesheet" href="{{ URL::asset('backend/dist/css/select2.min.css') }}">
+
     <!-- HTML5 Shim and Respond.js') }} IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js') }} doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -65,7 +66,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 		.bootstrap-select>.dropdown-toggle.bs-placeholder, .bootstrap-select>.dropdown-toggle.bs-placeholder:active, .bootstrap-select>.dropdown-toggle.bs-placeholder:focus, .bootstrap-select>.dropdown-toggle.bs-placeholder:hover{
 		color:#444 !important;
 	}
-		
+		.upload-btn-wrapper1 {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.btn1 {
+  border: 2px solid gray;
+  color: gray;
+  background-color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.upload-btn-wrapper1 input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
 	</style>
 	
 
@@ -117,7 +140,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 								    	<input type="hidden" name="type" id="type" value="{{ isset($type) ? $type : 1 }}">
 								    	<div class="row-select">
 											<div class="form-group">
-												<select class="selectpicker form-control" data-live-search="true" name="estate_type_id" id="estate_type_id">
+												<select class="form-control" data-live-search="true" name="estate_type_id" id="estate_type_id">
 													<option value="">Loại bất động sản</option>
 													@foreach($banList as $ban)
 													<option data-slug="" @if(isset($estate_type_id) && $estate_type_id == $ban->id) selected @endif  class="option-lv1" value="{{ $ban->id }}">{{ $ban->name }}</option>
@@ -125,7 +148,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 												</select>
 											</div>	
 											<div class="form-group">
-												<select class="selectpicker form-control" data-live-search="true" id="city_id" name="city_id">
+												<select class="form-control" data-live-search="true" id="city_id" name="city_id">
 													<option value="">Tỉnh/TP</option>
 													@foreach($cityList as $city)
 													<option data-slug="" value="{{ $city->id }}" @if(isset($city_id) && $city_id == $city->id) selected @endif>{!! $city->name !!}</option>
@@ -133,7 +156,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 												</select>
 											</div>										
 											<div class="form-group">
-												<select class="selectpicker form-control" data-live-search="true" id="district_id" name="district_id">
+												<select class="form-control" data-live-search="true" id="district_id" name="district_id">
 													<option value="">Quận/Huyện</option>
 													@foreach($districtList as $district)
 													<option data-slug="" @if(isset($district_id) && $district_id == $district->id) selected @endif  value="{{ $district->id }}">{{ $district->name }}</option>
@@ -142,7 +165,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 											</div>
 											
 											<div class="form-group">
-												<select class="selectpicker form-control" data-live-search="true" name="price_id" id="price_id">
+												<select class="form-control" data-live-search="true" name="price_id" id="price_id">
 													<option value="">Mức giá</option>
 													@foreach($priceList as $price)
 													<option @if(isset($price_id) && $price_id == $price->id) selected @endif value="{{ $price->id }}">{{ $price->name }}</option>
@@ -150,7 +173,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 												</select>
 											</div>
 											<div class="form-group">
-												<select class="selectpicker form-control" id="area_id" name="area_id" data-live-search="true">
+												<select class="form-control" id="area_id" name="area_id" data-live-search="true">
 													<option value="">Diện tích</option>
 													@foreach($areaList as $area)
 													<option @if(isset($area_id) && $area_id == $area->id) selected @endif value="{{ $area->id }}">{{ $area->name }}</option>
@@ -279,7 +302,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 	<script src="{{ URL::asset('backend/dist/js/sweetalert2.min.js') }}"></script>
 	<script src="{{ URL::asset('assets/js/common.js') }}"></script>
 	<script src="{{ URL::asset('backend/dist/js/select2.min.js') }}"></script>
-	<script type="text/javascript" src="{{ url('ckeditor/ckeditor.js') }}"></script>
+ <script src="{{ URL::asset('backend/dist/js/ckeditor/ckeditor.js') }}"></script>
 	<script> 
 	if($('#editor1').length == 1){ // kiem tra ton tai moi gan editor 
 		CKEDITOR.replace('editor1');
@@ -304,7 +327,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     })
 </script>
 	<script type="text/javascript">
-	
+		
 		$(document).ready(function(){
 			$.ajaxSetup({
 		        headers: {
@@ -328,9 +351,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 					type : 'POST',
 					dataType : 'html',
 					success : function(data){
-						$('#district_id').html(data).selectpicker('refresh');
+						$('#district_id').html(data)url : '{{ route('get-child') }}';
 						@if(isset($district_id) && $district_id > 0)
-						$('#district_id').val({{ $district_id }}).selectpicker('refresh');
+						$('#district_id').val({{ $district_id }})url : '{{ route('get-child') }}';
 						@endif
 					}
 				});				
@@ -374,9 +397,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 					type : 'POST',
 					dataType : 'html',
 					success : function(data){
-						$('#estate_type_id').html(data).selectpicker('refresh');
+						$('#estate_type_id').html(data);
 						@if(isset($estate_type_id) && $estate_type_id > 0)
-						$('#estate_type_id').val({{ $estate_type_id }}).selectpicker('refresh');
+						$('#estate_type_id').val({{ $estate_type_id }})url : '{{ route('get-child') }}';
 						@endif
 					}
 				});
@@ -390,9 +413,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 					type : 'POST',
 					dataType : 'html',
 					success : function(data){
-						$('#price_id').html(data).selectpicker('refresh');
+						$('#price_id').html(data);
 						@if(isset($price_id) && $price_id > 0)
-						$('#price_id').val({{ $price_id }}).selectpicker('refresh');
+						$('#price_id').val({{ $price_id }})url : '{{ route('get-child') }}';
 						@endif
 					}
 				});
@@ -413,9 +436,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 					type : 'POST',
 					dataType : 'html',
 					success : function(data){
-						$('#estate_type_id').html(data).selectpicker('refresh');
+						$('#estate_type_id').html(data);
 						@if(isset($estate_type_id) && $estate_type_id > 0)
-						$('#estate_type_id').val({{ $estate_type_id }}).selectpicker('refresh');
+						$('#estate_type_id').val({{ $estate_type_id }})url : '{{ route('get-child') }}';
 						@endif
 					}
 				});
@@ -429,9 +452,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 					type : 'POST',
 					dataType : 'html',
 					success : function(data){
-						$('#price_id').html(data).selectpicker('refresh');
+						$('#price_id').html(data);
 						@if(isset($price_id) && $price_id > 0)
-						$('#price_id').val({{ $price_id }}).selectpicker('refresh');
+						$('#price_id').val({{ $price_id }})url : '{{ route('get-child') }}';
 						@endif
 					}
 				});
@@ -459,7 +482,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 	           
 	              $('#district_id').html(data);
 	            
-	            $('.selectpicker').selectpicker('refresh');
+	            
 	          }
 	        });
 	      }   

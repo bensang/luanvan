@@ -1,26 +1,35 @@
 @extends('frontend.layout')
 @section('content')
-<section class="class=col-sm-8 col-xs-8 block-sitemain">
+<section class="col-sm-8 col-xs-12 block-sitemain">
+<div class="content-wrapper">
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Đăng tin   
+      Bất Động Sản    
     </h1>
+    <ol class="breadcrumb">
+      <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+      <li><a href="">Bất động sản</a></li>
+      <li class="active"><span class="glyphicon glyphicon-pencil"></span></li>
+    </ol>
   </section>
 
   <!-- Main content -->
   <section class="content">
-    <a class="btn btn-default btn-sm" href="{{ route('home') }}" style="margin-bottom:5px">Quay lại</a>    
-    <form role="form" method="POST" action="{{ route('product.store') }}" id="dataForm" enctype="multipart/form-data">
+    <a class="btn btn-default btn-sm" href="{{ route('quan-ly', Auth::user()->id ) }}" style="margin-bottom:5px">Quay lại</a>
+    <form role="form" method="POST" action="{{ route('productFr.update') }}" id="dataForm" enctype="multipart/form-data">
     <div class="row">
-      <!-- left column -->      
+      <!-- left column -->
+      <input type="hidden" name="id" value="{{ $detail->id }}">
       <div class="col-md-12">
         <!-- general form elements -->
         <div class="box box-primary">
+          <div class="box-header with-border">
+            Chỉnh sửa
+          </div>
           <!-- /.box-header -->               
             {!! csrf_field() !!}          
             <div class="box-body">
-                          
                 @if(Session::has('message'))
                 <p class="alert alert-info" >{{ Session::get('message') }}</p>
                 @endif
@@ -39,36 +48,37 @@
                   <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Thông tin chi tiết</a></li>
                     <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Hình ảnh</a></li>                    
+                                    
                   </ul>
-
+<input type="hidden" id="editor" value="description">
                   <!-- Tab panes -->
                   <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="home">
-                      <div class="form-group col-md-6">
+                    <div role="tabpanel" class="tab-pane active" id="home">                     
+                      <div class="form-group col-md-4  pleft-5">
                           <label for="email">Loại <span class="red-star">*</span></label>
-                            <select class="form-control" name="type" id="type">
-                                <option value="1" {{ old('type', $type) == 1 ? "selected" : "" }} >Bán</option>
-                                <option value="2" {{ old('type', $type) == 2 ? "selected" : "" }} >Cho thuê</option>
+                            <select class="form-control" name="type" id="type_edit">
+                                <option value="1" {{ old('type', $detail->type) == 1 ? "selected" : "" }}>Bán</option>
+                                <option value="2" {{ old('type', $detail->type) == 2 ? "selected" : "" }}>Cho thuê</option>
                             </select>
                         </div>
-                        <div class="form-group col-md-6">
-                          <label for="email">Danh mục cha<span class="red-star">*</span></label>
-                          <select class="form-control" name="estate_type_id" id="estate_type_id">
+                        <div class="form-group col-md-4 none-padding">
+                          <label for="email">Danh mục<span class="red-star">*</span></label>
+                          <select class="form-control" name="estate_type_id" id="estate_type_id_edit">
                             <option value="">--Chọn--</option>
                             @foreach( $estateTypeArr as $value )
                             <option value="{{ $value->id }}"
-                            {{ old('estate_type_id', $estate_type_id) == $value->id ? "selected" : "" }}
+                            {{ old('estate_type_id', $detail->estate_type_id) == $value->id ? "selected" : "" }}                           
+
                             >{{ $value->name }}</option>
                             @endforeach
                           </select>
-                        </div>
-                        
+                        </div>                       
                         <div class="form-group col-md-12">
                           <label for="email">Tỉnh/Thành phố <span class="red-star">*</span></label>
-                            <select class="form-control" name="city_id" id="city_id1">
+                            <select class="form-control" name="city_id" id="city_id">
                                 @foreach( $cityList as $value )
                                 <option value="{{ $value->id }}"
-                                {{ old('city_id', $city_id) == $value->id ? "selected" : "" }}                           
+                                {{ old('city_id', $detail->city_id) == $value->id ? "selected" : "" }}                           
 
                                 >{{ $value->name }}</option>
                                 @endforeach
@@ -76,108 +86,140 @@
                         </div>
                         <div class="form-group col-md-6  pleft-5">
                           <label for="email">Quận <span class="red-star">*</span></label>
-                            <select class="form-control" name="district_id" id="district_id1">
+                            <select class="form-control" name="district_id" id="district_id">
                                 @foreach( $districtList as $value )
                                 <option value="{{ $value->id }}"
-                                {{ old('district_id', $district_id) == $value->id ? "selected" : "" }}                           
+                                {{ old('district_id', $detail->district_id) == $value->id ? "selected" : "" }}                           
 
                                 >{{ $value->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        
-                        <div class="form-group col-md-12" >                  
+                        <div class="form-group col-md-6  pleft-5" >                  
                           <label>Tên <span class="red-star">*</span></label>
-                          <input type="text" class="form-control" name="title" id="title" value="{{ old('title') }}">
+                          <input type="text" class="form-control" name="title" id="title" value="{{ old('title', $detail->title) }}">
                         </div>
-                        
-                        <div class="form-group col-md-6 none-padding" >                  
+                        <div class="form-group col-md-6  pleft-5" >                  
                             <label>Giá<span class="red-star">*</span></label>
-                            <input type="text" class="form-control" name="price" id="price" value="{{ old('price') }}">
+                            <input type="text" class="form-control" name="price" id="price" value="{{ old('price', $detail->amount) }}">
                         </div>
-                        <div class="form-group col-md-6 none-padding pleft-5" >                  
+                        <div class="form-group col-md-6 none-padding" >                  
                             <label>Đơn vị giá<span class="red-star">*</span></label>
                             <select class="form-control" name="amount_unit_id" id="amount_unit_id">
                               <option value="">--Chọn--</option>
                               @foreach( $priceUnitList as $value )
                               <option value="{{ $value->id }}"
-                              {{ old('price_unit_id') == $value->id ? "selected" : "" }}                           
+                              {{ old('amount_unit_id', $detail->amount_unit_id) == $value->id ? "selected" : "" }}                           
 
                               >{{ $value->name }}</option>
                               @endforeach
                             </select>
                         </div>
-                        
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4 none-padding">
                           <label>Diện tích <span class="red-star">*</span></label>                  
-                          <input type="text" class="form-control" name="area" id="area" value="{{ old('area') }}">                        
-                        </div>                        
-                        
-                        <div class="form-group col-md-6">
+                          <input type="text" class="form-control" name="area" id="area" value="{{ old('area', $detail->area) }}">                        
+                        </div>
+                        <div class="form-group col-md-3 none-padding pleft-5">
                           <label>Hướng</label>                  
                           <select class="form-control" name="direction_id" id="direction_id">
                             @if( $directionArr->count() > 0)
                               @foreach( $directionArr as $value )
-                              <option value="{{ $value->id }}" {{ old('direction_id') == $value->id  ? "selected" : "" }}>{{ $value->name }}</option>
+                              <option value="{{ $value->id }}" {{ old('direction_id', $detail->direction_id) == $value->id  ? "selected" : "" }}>{{ $value->name }}</option>
                               @endforeach
                             @endif
                           </select>                       
                         </div>
                         
+                        @if(Auth::user()->usertype_id == 1)
+                        <div class="form-group col-md-4 none-padding" >
+                            <div class="checkbox">
+                              <label>
+                                <input type="radio" name="status" value="0" {{ old('status', $detail->status) == 0 ? "checked" : "" }}>
+                                Chưa duyệt
+                              </label>
+                            </div>
+                        </div> 
+                        <div class="form-group col-md-4 none-padding" >
+                            <div class="checkbox">
+                              <label>
+                                <input type="radio" name="status" value="1" {{ old('status', $detail->status) == 1 ? "checked" : "" }}>
+                                Đã duyệt
+                              </label>
+                            </div>
+                        </div>
+                        @else
+                        @endif
+                        <input type="hidden" name="status" value="{{$detail->status}}">                       
+                        <div class="form-group col-md-4 none-padding" ></div> 
+                        <div class="clearfix"></div>                      
                         <div class="form-group form-group col-md-12 none-padding" style="margin-top:10px">
                             <label>Mô tả</label>
-                            <textarea class="form-control" rows="4" name="description" id="editor1">{{ old('description') }}</textarea>
+                            <textarea class="form-control" rows="4" name="description" id="editor1">{{ old('description', $detail->description) }}</textarea>
                           </div>
-                          <input type="hidden" id="editor" value="description">
                           <div class="clearfix"></div>
-                        <div class="form-group" style="margin-top:10px;margin-bottom:10px"> 
-                          <input id="pac-input" class="controls" type="text" placeholder="Nhập địa chỉ để tìm kiếm">
-                          <div id="map-abc"></div>
-                      </div>
-                        <div class="clearfix"></div>
-                    </div><!--end thong tin co ban-->   
+
+                            <div class="form-group" style="margin-top:10px;margin-bottom:10px"> 
+                              <input id="pac-input" class="controls" type="text" placeholder="Nhập địa chỉ để tìm kiếm">
+                              <div id="map-abc"></div>
+                          </div>
+                            <div class="clearfix"></div>
+                    </div><!--end thong tin co ban--> 
                      <div role="tabpanel" class="tab-pane" id="settings">
                         <div class="form-group" style="margin-top:10px;margin-bottom:10px">  
                          
                           <div class="col-md-12" style="text-align:center">                            
-                            <div>Ảnh đại diện</div>
-                            <div class="upload-btn-wrapper1">
-                              <button class="btn1">Upload a file</button>
-                              <input type="file" name="file-image" />
+                            <div class="clearfix"></div>
+                            <div id="div-image" style="margin-top:10px">
+                              <div class="col-md-4">
+                                    <label>Ảnh đại diện</label>
+                                    <img class="img-thumbnail" src="{!!asset('uploads/duan/'.$detail->image)!!}" style="width:150px; height:150px ">
+                                    <div class="upload-btn-wrapper1">
+                                      <button class="btn1" type="button">Upload a file</button>
+                                      <input type="file" name="file-image" />
+                                    </div>
+                                  </div>                            
+                              @if( $hinhArr )
+                                @foreach( $hinhArr as $k => $hinh)
+                                  <div class="col-md-4">
+                                    <label>Ảnh chi tiết</label>
+                                    <img class="img-thumbnail" src="{!!asset('uploads/duan/'.$hinh->filename)!!}" style="width:150px; height:150px ">
+                                    <div class="upload-btn-wrapper1">
+                                      <button class="btn1" type="button">Upload a file</button>
+                                      <input type="file" name="file-images[{{ $hinh->id }}]" value="<?php echo $hinh->filename; ?>" />
+                                    </div>
+                                    <div class="checkbox">                                   
+                                      <label><input type="radio" name="thumbnail_id" class="thumb" value="{{ $hinh->id }}" {{ $detail->project_id == $k ? "checked" : "" }}> Ảnh chi tiết </label>
+                                      <a href="{{ route( 'productimg.destroy', [ 'id' => $hinh->id ]) }}" class="btn btn-warning btn-sm"><span class="glyphicon glyphicon-trash"></span></a>
+                                    </div>
+                                  </div>                         
+                                @endforeach
+                              @endif
+                              <div class="upload-btn-wrapper1">
+                                      <button class="btn1">Upload a file</button>
+                                      <input type="file" name="file_images_new[]" value="" />
+                                    </div>
                             </div>
-                          </div>
-                          <div class="col-md-12" style="text-align:center">
-                            <div>Ảnh chi tiết</div>
-                            @for($i=1;$i<=5;$i++)
-                            <input type="file" name="file-images[]" style="margin-left: 200px; margin-bottom: 20px" />
-                            @endfor
                           </div>
                           <div style="clear:both"></div>
                         </div>
 
-                     </div><!--end hinh anh-->
-                     
+                     </div><!--end hinh anh-->                    
                   </div>
 
                 </div>
-                  
+                 
             </div>
-
-            <div class="box-footer">
-              <input type="text" name="longt" id="longt" value="" />
-              <input type="text" name="latt" id="latt" value="" />
-              <button type="button" class="btn btn-default btn-sm" id="btnLoading" style="display:none"><i class="fa fa-spin fa-spinner"></i></button>
-              <button type="submit" class="btn btn-primary btn-sm" id="btnSave">Lưu</button>
-              <a class="btn btn-default btn-sm" class="btn btn-primary btn-sm" href="">Hủy</a>
-            </div>
+            
             
         </div>
         <!-- /.box -->     
-
-      </div>
-      
-        <!-- /.box -->     
-
+        <div class="box-footer">
+              <input type="hidden" name="latt" id="latt" value="{{ old('latt', $detail->lt) }}" />
+              <input type="hidden" name="longt" id="longt" value="{{ old('longt', $detail->lg) }}" />
+              <button type="button" class="btn btn-default btn-sm" id="btnLoading" style="display:none"><i class="fa fa-spin fa-spinner"></i></button>
+              <button type="submit" class="btn btn-primary btn-sm" id="btnSave">Lưu</button>
+              <a class="btn btn-default btn-sm" class="btn btn-primary btn-sm" href="{{ route('quan-ly', Auth::user()->id ) }}">Hủy</a>
+            </div> 
       </div>
       <!--/.col (left) -->      
     </div>
@@ -187,11 +229,6 @@
   </section>
   <!-- /.content -->
 </div>
-
-
-<input type="hidden" id="route_upload_tmp_image_multiple" value="">
-<input type="hidden" id="route_upload_tmp_image" value="">
-<input type="hidden" id="route_get_tien_ich" value="">
 </section>
 <style type="text/css">
   .nav-tabs>li.active>a{
@@ -200,8 +237,45 @@
   }
 
 </style>
+<style>
+      #map-canvas, #map_canvas {
+        height: 350px;
+        width:100%;
+    }
 
-    <style>
+    @media print {
+        html, body {
+            height: auto;
+        }
+
+        #map-canvas, #map_canvas {
+            height: 350px;
+            width:100%;
+        }
+    }
+
+    #panel {
+        position: absolute;
+        left: 60%;
+        margin-left: -100px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+    }
+    input {
+        border: 1px solid  rgba(0, 0, 0, 0.5);
+    }
+    input[type=file] {
+    display: block !important;
+}
+    input.notfound {
+        border: 2px solid  rgba(255, 0, 0, 0.4);
+    }
+</style>
+<!-- Modal -->
+
+ <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map-abc {
@@ -262,34 +336,10 @@
       #pac-input:focus {
         border-color: #4d90fe;
       }     
-      .upload-btn-wrapper1 {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-}
-
-.btn1 {
-  border: 2px solid gray;
-  color: gray;
-  background-color: white;
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.upload-btn-wrapper1 input[type=file] {
-  font-size: 100px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-}
-input[type=file] {
-    display: block !important;
-}
+      
     </style>
 @stop
+
 @section('javascript_page')
 <script>
       // This example adds a search box to a map, using the Google Place Autocomplete
@@ -299,10 +349,13 @@ input[type=file] {
       // This example requires the Places library. Include the libraries=places
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
-
+      <?php 
+      $latt = $detail->latt ? $detail->latt : '10.7860332';
+      $longt = $detail->longt ? $detail->longt : '106.6950147';      
+      ?>
       function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map-abc'), {
-          center: {lat: 10.7860332, lng: 106.6950147},
+          center: {lat: {{ $latt }}, lng: {{ $longt }} },
           zoom: 17,
           mapTypeId: 'roadmap'
         });
@@ -316,9 +369,9 @@ input[type=file] {
         map.addListener('bounds_changed', function() {
           searchBox.setBounds(map.getBounds());
            var marker = new google.maps.Marker({
-              position: new google.maps.LatLng(10.7860332, 106.6950147),
-              draggable:true,
-              map: map            
+              position: new google.maps.LatLng({{ $latt }}, {{ $longt }}),
+              map: map,
+              draggable:true
             });
            google.maps.event.addListener(marker,'dragend',function(event) {
                 document.getElementById('latt').value = this.position.lat();
@@ -345,14 +398,15 @@ input[type=file] {
           // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
-            
             if (!place.geometry) {
               console.log("Returned place contains no geometry");
               return;
             }
             document.getElementById('latt').value = place.geometry.location.lat();
             document.getElementById('longt').value = place.geometry.location.lng();
-            var icon = {              
+            
+            var icon = {
+              url: place.icon,
               size: new google.maps.Size(128, 128),
               origin: new google.maps.Point(0, 0),
               anchor: new google.maps.Point(17, 34),
@@ -390,21 +444,20 @@ input[type=file] {
     </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhxs7FQ3DcyDm8Mt7nCGD05BjUskp_k7w&libraries=places&callback=initAutocomplete"
          async defer></script>
+        
 <script type="text/javascript">
 
-$(document).ready(function(){
 
+$(document).ready(function(){
+  $('.btn1').click(function(){
+    $(this).next().click();
+  });
 $('#pac-input').on('keypress', function(e) {
-    return e.which !== 13;
-});
+        return e.which !== 13;
+    });
   $('#btnAddTag').click(function(){
       $('#tagModal').modal('show');
   });
-});
-$(document).on('click', '.remove-image', function(){
-  if( confirm ("Bạn có chắc chắn không ?")){
-    $(this).parents('.col-md-3').remove();
-  }
 });
 $(document).on('click', '#btnSaveTagAjax', function(){
     $.ajax({
@@ -456,27 +509,124 @@ $(document).on('click', '#btnSaveTagAjax', function(){
           });
        }
     });
+$(document).on('click', '.remove-image', function(){
+/*  var obj = $(this);
+  var is_thumbnail = obj.parents('col-md-3').find("input[name=thumbnail_id]").is(":checked");
+  console.log(is_thumbnail);
+  */
+  if( confirm ("Bạn có chắc chắn không ?")){
+    $(this).parents('.col-md-3').remove();
+  }
+});
 
-
+$(document).on('click', '#btnSearchAjax', function(){
+  filterAjax($('#search_type').val());
+});
+$(document).on('keypress', '#name_search', function(e){
+  if(e.which == 13) {
+      e.preventDefault();
+      filterAjax($('#search_type').val());
+  }
+});
 
     $(document).ready(function(){
-     
-       
-      $('#type, #estate_type_id').change(function(){
-
-        var url ="{{ route('dang-tin') }}?type=" + $('#type').val();
-        if($('#estate_type_id').val() > 0){
-          url += '&estate_type_id=' + $('#estate_type_id').val();
-        }
-        location.href = url;
-      });
+      var type = {{ $detail->type }};
+         $.ajax({
+            url : '{{ route('get-child') }}',
+            data : {
+              mod : 'estate_type',
+              col : 'type',
+              id : type
+            },
+            type : 'POST',
+            dataType : 'html',
+            success : function(data){
+              $('#estate_type_id_edit').html(data).val({{ $detail->estate_type_id }});
+            }
+      
+      $('#type_edit').change(function(){
+         var type = $(this).val();
+         $.ajax({
+            url : '{{ route('get-child') }}',
+            data : {
+              mod : 'estate_type',
+              col : 'type',
+              id : type
+            },
+            type : 'POST',
+            dataType : 'html',
+            success : function(data){
+              $('#estate_type_id_edit').html(data);
+            }
+          });
+      })
       $(".select2").select2();
-      $('#dataForm').submit(function(){
-        
+      $('#dataForm').submit(function(){      
         $('#btnSave').hide();
         $('#btnLoading').show();
       });
-      
+    
+      var editor3 = CKEDITOR.replace( 'description',{
+          language : 'vi',
+          height : 300
+      });
+      $('#btnUploadImage').click(function(){        
+        $('#file-image').click();
+      }); 
+     
+      var files = "";
+      $('#file-image').change(function(e){
+         files = e.target.files;
+         
+         if(files != ''){
+           var dataForm = new FormData();        
+          $.each(files, function(key, value) {
+             dataForm.append('file[]', value);
+          });   
+          
+          dataForm.append('date_dir', 0);
+          dataForm.append('folder', 'tmp');
+
+          $.ajax({
+            url: $('#route_upload_tmp_image_multiple').val(),
+            type: "POST",
+            async: false,      
+            data: dataForm,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $('#div-image').append(response);
+                if( $('input.thumb:checked').length == 0){
+                  $('input.thumb').eq(0).prop('checked', true);
+                }
+            },
+            error: function(response){                             
+                var errors = response.responseJSON;
+                for (var key in errors) {
+                  
+                }
+                //$('#btnLoading').hide();
+                //$('#btnSave').show();
+            }
+          });
+        }
+      });
+     $('#city_id').change(function(){
+        var city_id = $(this).val();
+         $.ajax({
+            url : '{{ route('get-child') }}',
+            data : {
+              mod : 'district',
+              col : 'city_id',
+              id : city_id
+            },
+            type : 'POST',
+            dataType : 'html',
+            success : function(data){
+              $('#district_id').html(data);
+            }
+          });
+      });
 
       $('#title').change(function(){
          var name = $.trim( $(this).val() );
@@ -503,28 +653,9 @@ $(document).on('click', '#btnSaveTagAjax', function(){
               }
             });
          }
-      });
-      $('#city_id1').change(function(){
-
-        var city_id = $(this).val();
-         $.ajax({
-            url : '{{ route('get-child') }}',
-            data : {
-              mod : 'district',
-              col : 'city_id',
-              id : city_id
-            },
-            type : 'POST',
-            dataType : 'html',
-            success : function(data){
-              $('#district_id1').html(data);
-            }
-          });
-      });
- var editor3 = CKEDITOR.replace( 'description',{
-          language : 'vi',
-          height : 300          
-      });
+      }); 
+      
     });
+    
 </script>
 @stop

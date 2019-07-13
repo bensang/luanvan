@@ -19,6 +19,8 @@ use App\District;
 use App\Direction;
 use App\Unit;
 use App\Contact;
+use App\Price;
+use App\Area;
 use App\ProductImage;
 use Helper, File, Session, Auth, Hash;
 use Mail;
@@ -27,8 +29,8 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     public function index(Request $request)
     {
-    	$hotProduct = Product::where('type', 1)->limit(10)->get();
-    	$hotProduct2 = Product::where('type', 2)->limit(10)->get();
+    	$hotProduct = Product::where('type', 1)->limit(10)->orderBy('id','DESC')->get();
+    	$hotProduct2 = Product::where('type', 2)->limit(10)->orderBy('id','DESC')->get();
     	$tinThiTruong = Articles::where('cate_id', 1)->limit(6)->get()->toArray();
     	$luat = Articles::where('cate_id', 2)->orderBy('id', 'desc')->limit(6)->get()->toArray();
     	$tuvan = Articles::where('cate_id', 3)->orderBy('id', 'desc')->limit(6)->get()->toArray();
@@ -274,8 +276,8 @@ class Controller extends BaseController
         $product->image = $filename;
         $product->user_id = Auth::user()->id;
         $product->status = 0;
-        $product->lt = $request->longt;
-        $product->lg = $request->latt;
+        $product->lt = $request->latt;
+        $product->lg = $request->longt;
         if($request->price>0 && $request->price<300000000){
             $product->price_id = 1;
         }
@@ -332,5 +334,112 @@ class Controller extends BaseController
         $productArr = $productList->toArray();
             
         return view('frontend.product.search', compact('productList','productArr','estate_type_id','district_id','area_id','price_id','city_id','type'));
+    }
+    public function qlIndex(Request $request){
+        $productArr = [];
+        $id = $request->id;
+        $productList = Product::where('user_id', $id)->paginate(10);
+        $productArr = $productList->toArray();                                            
+        return view('frontend.quanly.index', compact('productList','productArr'));
+    }
+    public function productEdit($id)
+    {        
+        $hinhArr = (object) [];
+        $detail = Product::find($id);
+       // var_dump($detail->type);die;
+        $hinhArr = ProductImage::where('product_id', $id)->get();     
+        $estateTypeArr = EstateType::where('type', $detail->type)->get();
+        $priceList = Price::where('id', $detail->price_id)->get();
+        $estate_type_id = $detail->estate_type_id;             
+        $detailEstate = EstateType::find($estate_type_id);             
+        $priceUnitList = Unit::where('type', 'amount')->get();
+        $districtList = District::where('city_id', $detail->city_id)->get();
+       // var_dump($detail->district_id);die;
+        $directionArr = Direction::all();
+        $areaList = Area::all();
+        return view('frontend.quanly.edit', compact( 'detail', 'hinhArr', 'estateTypeArr', 'priceUnitList', 'districtList','detailEstate', 'directionArr', 'areaList'));
+    }
+    public function productUpdate(Request $request){
+        $this->validate($request,[
+            'type' => 'required',
+            'estate_type_id' => 'required',
+            'district_id' => 'required',
+            'title' => 'required',
+            'price' => 'required|numeric',
+            'amount_unit_id' => 'required',
+            'area' => 'required|numeric',
+        ],
+        [            
+            'estate_type_id.required' => 'Bạn chưa chọn loại bất động sản',
+            'district_id.required' => 'Bạn chưa chọn quận',
+            'title.required' => 'Bạn chưa nhập tiêu đề',
+            'price.required' => 'Bạn chưa nhập giá',
+            'price.numeric' => 'Bạn nhập giá không hợp lệ',
+            'amount_unit_id.required' => 'Bạn chưa chọn đơn vị giá',            
+            'area.required' => 'Bạn chưa nhập diện tích',
+        ]);
+        $filename = null;
+        if($request->file('file-image')){
+            $filename = $request->file('file-image')->getClientOriginalName();    
+        }        
+        $product = Product::find($request->id);
+        $product->title = $request->title;
+        $product->description = $request->description;
+        $product->type = $request->type;
+        $product->estate_type_id = $request->estate_type_id;
+        $product->city_id = $request->city_id;
+        $product->district_id = $request->district_id;
+        $product->direction_id = $request->direction_id;
+        $product->area = $request->area;
+        $product->area_unit_id = 1;
+        $product->amount_unit_id = $request->amount_unit_id;
+        $product->amount = $request->price;   
+        if($filename){
+            $product->image = $filename;
+        }
+        $product->status = $request->status;
+        $product->lt = $request->latt;
+        $product->lg = $request->longt;
+        if($request->price>0 && $request->price<300000000){
+            $product->price_id = 1;
+        }
+        if($request->price>=300000000 && $request->price<500000000){
+            $product->price_id = 2;
+        }
+        if($request->price>=500000000 && $request->price<1000000000){
+            $product->price_id = 3;
+        }
+        if($request->price>=1000000000){
+            $product->price_id = 4;
+        }
+        if($filename){
+            $request->file('file-image')->move(public_path('uploads/duan/'),$filename);    
+        }        
+        $product->update();
+        $product_id = $product->id;
+        
+        if(Input::hasFile('file-images')){
+            foreach(Input::file('file-images') as $image_id => $file){               
+                $product_img = ProductImage::find($image_id);                
+                $product_img->filename = $file->getClientOriginalName();
+                $file->move(public_path('uploads/duan/'),$file->getClientOriginalName());
+                $product_img->update();
+                
+            }
+        }
+        if(Input::hasFile('file_images_new')){
+            foreach(Input::file('file_images_new') as $file){
+                $product_img = new ProductImage();
+                if(isset($file)){
+                    $product_img->filename = $file->getClientOriginalName();
+                    $product_img->product_id = $product_id;
+                    $file->move(public_path('uploads/duan/'),$file->getClientOriginalName());
+                    $product_img->save();
+                }
+            }
+        }
+        Session::flash('message', 'Cập nhật tin thành công');
+
+        return redirect()->route('home');
     }
 }

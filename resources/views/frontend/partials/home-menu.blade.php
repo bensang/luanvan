@@ -48,7 +48,13 @@
         <li class="level0 "><a class="" href="{{route('contact')}}">Liên hệ</a></li>
         <li class="level0 "><a class="" href="{{route('dang-tin')}}">Đăng tin</a></li>
         @if(Auth::check())
-        <li class="level0 "><a class="" href="">Chào {{Auth::user()->name}}</a></li>
+        <li class="level0 "><a class="" href="">Chào {{Auth::user()->name}}</a>
+            <ul class="level0 submenu">
+                
+                <li class="level1"><a href="{{ route('quan-ly', Auth::user()->id ) }}">Quản lý BĐS</a></li>
+                
+            </ul>
+        </li>
         <li><a href="{{route('dang-xuat')}}">Đăng xuất</a></li>
         @else
       @endif<!-- END MENU HOME -->

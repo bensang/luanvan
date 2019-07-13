@@ -297,9 +297,17 @@ class BackendController extends Controller
     }
     public function productDestroy($id)
     {
+        ProductImage::where('product_id', $id)->delete();
         $model = Product::find($id);        
-        $model->delete();
+        $model->delete();         
         Session::flash('message', 'Xóa tin thành công');
+        return redirect(URL::previous());    
+    }
+    public function productImgDestroy($id)
+    {
+        $model = ProductImage::find($id);        
+        $model->delete();
+        Session::flash('message', 'Xóa ảnh thành công');
         return redirect(URL::previous());    
     }
     public function productCheck($id)

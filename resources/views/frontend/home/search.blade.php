@@ -17,7 +17,7 @@
 				    	<div class="row-select">
 							<div class="col-xs-2">
 								<div class="form-group">
-									<select class="selectpicker form-control" data-live-search="true" name="estate_type_id" id="estate_type_id">
+									<select class="form-control" data-live-search="true" name="estate_type_id" id="estate_type_id">
 										<option selected="selected" value="">Loại bất động sản</option>
 										
 										<option data-slug="" value=""></option>
@@ -27,7 +27,7 @@
 							</div>	
 							<div class="col-xs-2">
 								<div class="form-group">
-									<select class="selectpicker form-control" data-live-search="true" id="city_id" name="city_id">
+									<select class="form-control" data-live-search="true" id="city_id" name="city_id">
 										<?php 
 										$city_id = !isset($city_id) ? 23 : $city_id;
 										?>
@@ -40,7 +40,7 @@
 							</div>								
 							<div class="col-xs-2">
 								<div class="form-group">
-									<select class="selectpicker form-control" data-live-search="true" id="district_id" name="district_id">
+									<select class="form-control" data-live-search="true" id="district_id" name="district_id">
 										<option value="">Quận/Huyện</option>
 										<?php 
 										$district_id = !isset($district_id) ? 260 : $district_id;
@@ -55,7 +55,7 @@
 							
 							<div class="col-xs-2">
 								<div class="form-group">
-									<select class="selectpicker form-control" data-live-search="true" name="price_id" id="price_id">
+									<select class="form-control" data-live-search="true" name="price_id" id="price_id">
 										<option value="">Mức giá</option>
 										
 										<option  value=""></option>
@@ -68,7 +68,7 @@
 						<div class="row-select">
 							<div class="col-xs-2">
 								<div class="form-group">
-									<select class="selectpicker form-control" id="area_id" name="area_id" data-live-search="true">
+									<select class="form-control" id="area_id" name="area_id" data-live-search="true">
 										<option value="">Diện tích</option>
 										
 										<option value=""></option>
@@ -110,7 +110,7 @@
 				type : 'POST',
 				dataType : 'html',
 				success : function(data){
-					$('#district_id').html(data).selectpicker('refresh');					
+					$('#district_id').html(data);					
 				}
 			});
 		});
@@ -132,7 +132,7 @@
 				type : 'POST',
 				dataType : 'html',
 				success : function(data){
-					$('#estate_type_id').html(data).selectpicker('refresh');
+					$('#estate_type_id').html(data);
 				}
 			});
 			$.ajax({
@@ -145,7 +145,7 @@
 				type : 'POST',
 				dataType : 'html',
 				success : function(data){
-					$('#price_id').html(data).selectpicker('refresh');
+					$('#price_id').html(data);
 				}
 			});
 		});

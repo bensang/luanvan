@@ -30,6 +30,9 @@ Route::get('ban-dat-{id}.html', ['as' => 'danh-muc', 'uses' => 'Controller@cate'
 Route::get('ban-dat-{id_cate}/{id}.html', ['as' => 'chi-tiet', 'uses' => 'Controller@chitiet']);
 Route::get('tim-kiem.html', ['as' => 'search', 'uses' => 'Controller@search']);
 Route::post('/get-child', ['uses' => 'Controller@getChild', 'as' => 'get-child']);
+Route::get('quan-ly-{id}.html', ['as' => 'quan-ly', 'uses' => 'Controller@qlIndex']);
+Route::get('frontend/product/{id}/edit',   ['as' => 'productFr.edit', 'uses' => 'Controller@productEdit']);
+Route::post('frontend/product/update', ['as' => 'productFr.update', 'uses' => 'Controller@productUpdate']);
 //End Frontend
 
 //Start Backend
@@ -43,7 +46,8 @@ Route::get('backend/product/create', ['as' => 'product.create', 'uses' => 'Backe
 Route::post('backend/product/store', ['as' => 'product.store1', 'uses' => 'BackendController@productStore'])->middleware('isAdmin');        
 Route::get('backend/product/{id}/edit',   ['as' => 'product.edit', 'uses' => 'BackendController@productEdit'])->middleware('isAdmin');
 Route::post('backend/product/update', ['as' => 'product.update', 'uses' => 'BackendController@productUpdate'])->middleware('isAdmin');
-Route::get('backend/product/{id}/destroy', ['as' => 'product.destroy', 'uses' => 'BackendController@productDestroy'])->middleware('isAdmin');
+Route::get('backend/product/{id}/destroy', ['as' => 'product.destroy', 'uses' => 'BackendController@productDestroy']);
+Route::get('backend/product/{id}/destroy-img', ['as' => 'productimg.destroy', 'uses' => 'BackendController@productImgDestroy'])->middleware('isAdmin');
 Route::get('backend/product/{id}/check',   ['as' => 'product.check', 'uses' => 'BackendController@productCheck'])->middleware('isAdmin');
 Route::get('backend/estate-type', ['as' => 'estate-type.index', 'uses' => 'BackendController@estateIndex'])->middleware('isAdmin');
 Route::get('backend/estate-type/create', ['as' => 'estate-type.create', 'uses' => 'BackendController@estateCreate'])->middleware('isAdmin');
